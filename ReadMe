@@ -1,0 +1,31 @@
+From gigi@yellow.Stanford.EDU Mon Apr 10 10:12:14 1995
+Date: Mon, 10 Apr 95 10:12:13 PDT
+From: gigi@yellow.Stanford.EDU (Hagit Hel-Or (Zabrodsky))
+To: brian@yellow.Stanford.EDU
+Subject: MOSAIC
+Content-Length: 769
+X-Lines: 18
+Status: RO
+
+ 
+The directory is /wusr4/gigi/MATLAB/TILES
+ 
+There is a read me file there
+
+cmosaic.m  -  mosiacs one big image with many small ones neads an array of 
+              file names which can be created using create_fname_list.m
+
+combine_cmosaic.m - mosaics 2 big images where one wil be seen from afar
+              (using it's color content) and the other from up close (using
+              it's textural content) 
+
+create_fname_list.m - creates an array with file names, used for cmosaic.m
+
+spline_tile.m - splines (smoothes) the tiles in a tiled image.
+                uses the pyramid package.
+
+create_random.m - creates a random tiling of small images into a single
+                large image. Can be used to create input image for 
+                combine_cmosaic.m 
+
+

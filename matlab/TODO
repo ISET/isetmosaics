@@ -1,0 +1,33 @@
+
+DECISIONS:
+	* Keep the tile images the same size as one another.
+	  This could be generalized, of course.
+
+	CreateSubImage should use shrinkImage
+	ShrinkImage should get neatened
+
+0.  Which examples?
+	Fuchs, Garage
+
+1.  Conceptually: Create a tile image and base image. Then transfer
+some of the properties from the base image to the tile image.
+
+	(b)  Smooth the tile image before transferring the
+	properties. 
+	(c)  Drag and drop of some tiles?
+
+
+3.  Integrate the modern pyramid code into the spline code.
+
+4.  Review structure of patent
+
+5.  Add comments and neaten the Matlab code generally.  More
+functions?  Anything else?
+
+
+----
+
+2.  Review the methods of creating tile images to include (a) random
+position and scale, (b) uniformly tiled.  The size of the tile images
+could be variable as well.
+	(a)  For example,make monochrome tiles, transfer the color

@@ -1,0 +1,12 @@
+
+New Algorithm
+
+1.  First, take the black and white images of arbitrary sizes
+and code them into a couple of matrices that denote the image
+sizes and the row and col sizes of the image.\
+
+2.  Second, merge the black and white images into an image that has
+the same shape as the base image.
+
+3.  Then, go through the black and white merged image in NxN squares and assign
+each square the same color and contrast as the base image.
