@@ -1,48 +1,57 @@
 % image mosaics:  Structure for the new mosaic code
 %
+% I think the local directory at wandell's home has these test data.
+%
+% Put them on the RDT, maybe.
 
 %% This is one example data set
 curDir = cd;
 originalImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/originalTiles/';
-subImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/subImage/';
-baseImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/baseImage/';
-dataDir = '/home/gigi/MATLAB/MOSAICS/TRY/';
-bname = 'fruit512';
-baseImageName = [baseImageDir bname]
+subImageDir   = '/home/gigi/MATLAB/MOSAICS/TRY/subImage/';
+baseImageDir  = '/home/gigi/MATLAB/MOSAICS/TRY/baseImage/';
+dataDir       = '/home/gigi/MATLAB/MOSAICS/TRY/';
+bname         = 'fruit512';
+baseImageName = [baseImageDir,bname];
+disp(baseImageName);
 
 %% Another example data set
+%{
 curDir = cd;
 originalTileDir = '/home/wandell/mosaics/panthers/originalTiles/';
 subImageDir = '/home/wandell/mosaics/panthers/subImage/';
 baseImageDir = '/home/wandell/mosaics/panthers/baseImage/';
 dataDir = '/home/wandell/mosaics/panthers/';
 bname = 'lion';
-baseImageName = [baseImageDir bname]
+baseImageName = [baseImageDir, bname];
+disp(baseImageName);
+%}
 
 %% This seems to build up the collection of tiles for the mosaic
 
-% This script might require having all the data files in place 
+% This script might require having all the data files in place
 % instead of doing this.
-% 
+%
 changeDir(dataDir)
 if check4File('mosaicData')
-  disp('Loading existing mosaicData file')
-  load mosaicData
+    % If the file was built already, load it
+    disp('Loading existing mosaicData file')
+    load mosaicData
 else
-  nGray = 220; 
-  crop = [1 1; 64 64]
-  tileRow = 128; tileCol = 128;
-  disp('Creating sub-images and building mosaicData file')
-  CreateSubImages
-  changeDir(dataDir)
-  save mosaicData originalTileDir subImageDir nGray crop nameList
+    nGray = 220;
+    crop = [1 1; 64 64];
+    tileRow = 128; tileCol = 128;
+    disp('Creating sub-images and building mosaicData file')
+    CreateSubImages
+    
+    changeDir(dataDir)
+    save mosaicData originalTileDir subImageDir nGray crop nameList
 end
 
 % This routine allows the tile images to be different sizes.  We
 % aren't set up for that yet.
 scaleFactor = 2;
 [tileImageList, tileSize] =  ...
-  readTileImages(subImageDir,[tileRow tileCol],scaleFactor);
+    readTileImages(subImageDir,[tileRow tileCol],scaleFactor);
 
 % For now, we are insisting on all the tiles being the same size
 tileSize = tileSize(1,:);
@@ -65,13 +74,15 @@ tileImage = placeTiles(tileImageList,tileSize,tileImageSize,'t');
 % tileImage, are all the same size (tileSize)
 
 %% This must do something
-[r g b] = blendImages(baseImage,baseMap,tileImage,tileSize);
+[r, g, b] = blendImages(baseImage,baseMap,tileImage,tileSize);
 
-%% Write it out with some kind of reasonable name 
+%% Write it out with some kind of reasonable name
 % This is drawn from the parameters of the calls
-% 
+%
 mosaicName = [bname,num2str(tileRow/scaleFactor),'.tif'];
 fprintf('Saving first mosaic:  %s\n',mosaicName);
+
+% Probably needs to be imwrite, different architecture.
 changeDir(dataDir), tiffwrite(r,g,b,mosaicName);
 % unix(['xv -perfect ',mosaicName,' &']);
 
