@@ -1,5 +1,4 @@
-function tileImage = ...
-    placeTiles(tileImageList,tileSize,tileImageSize,method,arg1,arg2,arg3)
+function outImage = placeTiles(baseImageSize,tileImages,method,varargin)
 %
 %AUTHOR: Hel-Or, Wandell
 %DATE:   Nov. 1995
@@ -13,50 +12,58 @@ function tileImage = ...
 % RETURNS:
 % tileImage:   black white image containing the positioned tiles
 
-nTiles = size(tileImageList,2);
+%%
+p = inputParser;
 
-% create the tile image using the 't' method
-% 
+p.addRequired('tileImages',@(x)(ndims(x) == 3));
+p.addRequired('method',@ischar);
+p.addParameter('tileDensity',3,@isscalar);
+p.addParameter('rseed',1,@isscalar);
+
+p.parse(tileImages,method,varargin{:});
+
+tileDensity = p.Results.tileDensity;
+rseed = p.Results.rseed;
+
+nTiles = size(tileImages,3);
+[r,c,~] = size(tileImages);
+tileImageSize = [r,c];
+
+%%
+
+% Create the tile image using the 't' method
 if (method == 't')
 
-  rowPositions = 1:tileSize(1):tileImageSize(1);
-  colPositions = 1:tileSize(2):tileImageSize(2);
-  tileImage = zeros(tileImageSize);
+  rowPositions = 1:tileImageSize(1):baseImageSize(1);
+  colPositions = 1:tileImageSize(2):baseImageSize(2);
+  outImage = zeros(baseImageSize);
 
   for r = rowPositions
     for c = colPositions
-      whichTile = ceil(nTiles.*rand(1));   
-      tileImage(r:(r+tileSize(1)-1),c:(c+tileSize(2)-1)) = ...
-	  reshape(tileImageList(:,whichTile),tileSize(1),tileSize(2));
+      whichTile = ceil(nTiles .* rand(1));   
+      outImage(r:(r+tileImageSize(1)-1),c:(c+tileImageSize(2)-1)) = ...
+          tileImages(:,:,whichTile);
       fprintf('%3.0f',whichTile);
-    end;
-  end;
+    end
+  end
 
   fprintf('\n');
 
 elseif (method == 'r')
 
   fprintf('Creating tile image using a random placement algorithm.\n');
-
-  if (~exist('arg1')), tileDensity = 3; 
-  else tileDensity = arg1;
-  end
-
-  if (~exist('arg2')), rseed = 1;
-  else rseed = arg2;
-  end
-
-  rand('seed',rseed); 
+  rng(rseed); 
+  
   nTilePlaces = round( prod( tileImageSize ./ tileSize ) * tileDensity);
-  tileImage = zeros(tileImageSize);
+  outImage = zeros(tileImageSize);
 
   for ii = 1:nTilePlaces
     r = max(1,round(rand(1)*(tileImageSize(1) - (tileSize(1)+1))));
     c = max(1,round(rand(1)*(tileImageSize(2) - (tileSize(2)+1))));
     whichTile = ceil(nTiles.*rand(1));   
 
-    tileImage(r:(r+tileSize(1)-1),c:(c+tileSize(2)-1)) = ...
-	reshape(tileImageList(:,whichTile),tileSize(1),tileSize(2));
+    outImage(r:(r+tileSize(1)-1),c:(c+tileSize(2)-1)) = ...
+	reshape(tileImages(:,whichTile),tileSize(1),tileSize(2));
     
     if (mod(ii,round(nTilePlaces/10)) == 0)
       fprintf('Percent done: %3.2f\n',100*ii/nTilePlaces);
@@ -68,4 +75,4 @@ else
   error('Unknown method');
 end
 
-return;
+end

@@ -1,7 +1,6 @@
-function [tileImages, tSize] =  ...
-   readTileImages(subImageDir, maxTileSize, scaleFactor)
+function tileImages =  readTileImages(subImageDir, maxTileSize, scaleFactor)
 %
-% [tileImages, tSize] = makeTile(subImageDir, maxTile,Size scaleFactor)
+% tileImages = readTileImages(subImageDir, maxTileSize, scaleFactor)
 %
 % AUTHOR:  H. Hel-Or and B. Wandell
 % DATE:    02.6.95
@@ -23,29 +22,28 @@ function [tileImages, tSize] =  ...
 % Allocate space for the tiled image and copy the first image in
 %
 
+%% Read in the names of the tiff files
+% 
+
 disp('Reading tile images')
 
-% Read in the names of the tiff files
-% 
-changeDir(subImageDir)
-[status tiffFiles] = unix('ls *.tif');
-NEWLINE = 10;
-indx = find(tiffFiles == NEWLINE);
-nImages = length(indx);
-indx = [0 indx];
+cd(subImageDir)
+tiffFiles = dir('*.tif');
+nImages = numel(tiffFiles);
 
-%
 tileImages = zeros(prod(maxTileSize/scaleFactor),nImages);
 
-%  
-for(i = 1:nImages)
-  fname = tiffFiles(indx(i)+1:indx(i+1)-1);
+%% Make the tensor of B/W tile images
+
+for (ii = 1:nImages)
+  fname = tiffFiles(ii).name;
   fprintf('image: %s\n', fname);
-  [tmp tmp_mp] = tiffread([subImageDir fname]);
-  [r c] = size(tmp);
-  tmp = tmp(1:scaleFactor:r,1:scaleFactor:c);
-  tmp = reshape(tmp_mp(tmp,2),size(tmp,1),size(tmp,2));
-  tSize(i,:) = size(tmp);
-  sz = length(tmp(:));
-  tileImages(1:sz,i) = tmp(:);
+  tmp = imread(fullfile(subImageDir,fname));
+  tmp = tmp(1:scaleFactor:end,1:scaleFactor:end);
+  if ii == 1
+      tileImages = zeros(size(tmp,1),size(tmp,2),nImages);
+  end
+  tileImages(:,:,ii) = tmp;
 end
+
+%%

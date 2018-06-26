@@ -5,6 +5,8 @@ function [cImage,cMap] = readBaseImage(fname,nBits)
 %PURPOSE:
 %  Read in the base image
 
+error('Deprecated');
+
 if nargin < 2
  nBits = 8;
 end
