@@ -1,21 +1,67 @@
-% script
+% Mosaic - TRY
 %
-% Make a mosaic image of the Panther's
+% Make a mosaic image with the TRY fruit example
 % 
 
-
-% These are the parameters that we need for everything else. 
+%% These are the parameters that we need for everything else. 
 % 
 curDir = cd;
-originalImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/originalImage/';
-subImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/subImage/';
-baseImageDir = '/home/gigi/MATLAB/MOSAICS/TRY/baseImage/';
-dataDir = '/home/gigi/MATLAB/MOSAICS/TRY/';
-routinesDir = '/home/gigi/MATLAB/MOSAICS/Distribution/';
-nGray = 220; 
-crop = [1 1; 128 128];
+originalImageDir = fullfile(mosaicsRootPath,'local','mosaics','TRY','originalTiles');
+subImageDir      = fullfile(mosaicsRootPath,'local','mosaics','TRY','subImage');
+baseImageDir     = fullfile(mosaicsRootPath,'local','mosaics','TRY','baseImage');
 
-path(path,routinesDir);
+dataDir       = fullfile(mosaicsRootPath,'local','mosaics','TRY'); 
+bname         = 'fruit512';
+baseImageName = fullfile(baseImageDir,bname);
+disp(baseImageName);
+
+%% This seems to build up the collection of tiles for the mosaic
+
+% This script might require having all the data files in place
+% instead of doing this.
+%
+cd(dataDir)
+if exist('mosaicData.mat','file')
+    % If the file was built already, load it
+    disp('Loading existing mosaicData file')
+    load mosaicData
+else
+    nGray = 220;
+    crop = [1 1; 64 64];
+    tileRow = 128; tileCol = 128;
+    disp('Creating sub-images and building mosaicData file')
+    CreateSubImages
+    
+    cd(dataDir)
+    save mosaicData originalImageDir subImageDir nGray crop tiffFiles
+end
+
+% This routine allows the tile images to be different sizes.  We
+% aren't set up for that yet.
+scaleFactor = 2;
+tileImages = readTileImages(subImageDir,[tileRow tileCol],scaleFactor);
+baseImage  = imread(baseImageName,'tif');
+tileSize = size(tileImages);
+
+%% Change base image to be a multiple of the tiles.
+nRow = floor(size(baseImage,1)/tileSize(1))*tileSize(1);
+nCol = floor(size(baseImage,2)/tileSize(2))*tileSize(2);
+baseImageSize = size(baseImage);
+
+%% Seems to do the work
+tileImage = placeTiles(baseImageSize(1:2),tileImages,'t');
+
+% vcNewGraphWin; imagesc(tileImage), axis image
+
+%% This puts all the images together, matching the baseImage
+
+imgMosaic = blendImages(baseImage,tileImage,tileSize);
+% vcNewGraphWin; imshow(imgMosaic)
+
+%% Carry below here
+% A lot to delete that 
+
+
 % Now,create the gray level sub images with the crop size.  This
 % is currently a script, but it could be a function.  This script
 % creates nameList, which is saved.
