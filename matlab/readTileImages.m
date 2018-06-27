@@ -1,6 +1,6 @@
-function tileImages =  readTileImages(subImageDir, maxTileSize, scaleFactor)
+function tileImages =  readTileImages(subImageDir, tileSize)
 %
-% tileImages = readTileImages(subImageDir, maxTileSize, scaleFactor)
+% tileImages = readTileImages(subImageDir, tileSize)
 %
 % AUTHOR:  H. Hel-Or and B. Wandell
 % DATE:    02.6.95
@@ -25,25 +25,22 @@ function tileImages =  readTileImages(subImageDir, maxTileSize, scaleFactor)
 %% Read in the names of the tiff files
 % 
 
+cd(subImageDir)
 disp('Reading tile images')
 
-cd(subImageDir)
-tiffFiles = dir('*.tif');
-nImages = numel(tiffFiles);
+% This should be more general than tif soon
+tileFiles = dir('*.tif');
+nImages = numel(tileFiles);
 
-tileImages = zeros(prod(maxTileSize/scaleFactor),nImages);
+tileImages = zeros(tileSize(1),tileSize(2),nImages);
 
 %% Make the tensor of B/W tile images
 
-for (ii = 1:nImages)
-  fname = tiffFiles(ii).name;
+for ii = 1:nImages
+  fname = tileFiles(ii).name;
   fprintf('image: %s\n', fname);
   tmp = imread(fullfile(subImageDir,fname));
-  tmp = tmp(1:scaleFactor:end,1:scaleFactor:end);
-  if ii == 1
-      tileImages = zeros(size(tmp,1),size(tmp,2),nImages);
-  end
-  tileImages(:,:,ii) = tmp;
+  tileImages(:,:,ii) = imresize(tmp,tileSize);
 end
 
 %%

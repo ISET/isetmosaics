@@ -1,19 +1,21 @@
 function imgMosaic = blendImages(baseImage,tileImage,tileSize)
+% Combine the color of base with the tiles
 %
+% Syntax
 %  imgMosaic = blendImages(baseImage,tileImage,tileSize)
 %
-% This code equates the tile mean with the base image mean,
-% and it sets the color direction of the black and white tile to the
-% first principal component of the color of the base image.
-%
-% AUTHOR:
-%
-%
+% Description
+%   This code equates the tile mean with the base image mean, and it
+%   sets the color direction of the black and white tile to the first
+%   principal component of the color of the base image.
 %
 %
 % BW, 2018
+%
+% See also
+%   CreateSubImages
 
-% For each part of the tile image
+%% For each part of the tile image
 rowPositions  = 1:tileSize(1):size(baseImage,1);
 colPositions  = 1:tileSize(2):size(baseImage,2);
 
@@ -24,6 +26,8 @@ tileImage = ieScale(double(tileImage),0,1);
 % vcNewGraphWin; imshow(tileImage); 
 
 imgMosaic = zeros(size(baseImage));
+
+%% Place and scale
 
 for r = rowPositions
     for c =colPositions

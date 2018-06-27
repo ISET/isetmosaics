@@ -4,13 +4,12 @@ function outImage = placeTiles(baseImageSize,tileImages,method,varargin)
 %DATE:   Nov. 1995
 %
 %ARGUMENTS
-% tileImageList: matrix whose columns contain the tiles
-% tileSize:     Size of the individual tiles.
-% tileImageSize:  row, col size of the returned black and white image
-% method:
+%  baseImageSize:  (row,col)
+%  tileImages:     row,col size of the returned black and white image
+%  method:
 %
 % RETURNS:
-% tileImage:   black white image containing the positioned tiles
+%    outImage: monochrome image containing the positioned tiles (0,1)
 
 %%
 p = inputParser;
@@ -74,5 +73,8 @@ elseif (method == 'r')
 else
     error('Unknown method');
 end
+
+% Out image is scaled
+outImage = ieScale(outImage,0,1);
 
 end
