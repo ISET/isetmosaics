@@ -53,7 +53,8 @@ for r = rowPositions
         normTile = double(mpT) - meanTile;
         
         % transform imgT into new color indices
-        s_img = u(:,1)*normTile';
+        % s_img = u(:,1)*normTile';
+        s_img = 0.5*ones(3,1)*normTile';
         s_img = s_img + meanBase';
         s_img = XW2RGBFormat(s_img',tileSize(1),tileSize(2));
 

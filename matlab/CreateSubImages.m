@@ -1,27 +1,35 @@
 function CreateSubImages(originalTilesDir,subImageDir,varargin)
-% 
-% Variables needed:  
-%  originalImageDir:
-%  nGray:
-%  crop:      Region where we crop the image.  This should go away.
+% Start with original tiles, resize and save to subimage directory
 %
-% BW
+% Inputs
+%  originalTilesDir
+%  subImageDir
+%
+% Key/value options
+%  image type  - 'jpg' is default but 'tif' or 'png' are possible
+%
+% BW, 1995
 %
 % See also
 %
 
-%%
+%%  Parse inputs
+varargin = ieParamFormat(varargin);
+
 p = inputParser;
 p.addRequired('originalTilesDir',@(x)(exist(x,'dir')));
 p.addRequired('subImageDir',@(x)(exist(x,'dir')));
+p.addParameter('imagetype','jpg',@ischar);
+
 p.parse(originalTilesDir,subImageDir, varargin{:});
 
-%% List the tiff files
+imagetype = p.Results.imagetype;
 
-% This should become general image files, and we need to exclude . and
-% ..
+%% List the files
+
 cd(originalTilesDir);
-imgFiles = dir('*.tif');
+srch = ['*.',imagetype];
+imgFiles = dir(srch);
 
 for ii=1:numel(imgFiles)
   fname = imgFiles(ii).name;
@@ -30,18 +38,19 @@ for ii=1:numel(imgFiles)
   % then scale them up to nGray range for writing out as tiff.
   % 
   [im,mp] = imread(fname);
-  rgb = ind2rgb(im,mp);
+  if ~isempty(mp), rgb = ind2rgb(im,mp); 
+  else, rgb = im;
+  end
   % vcNewGraphWin; imagesc(rgb); % colormap(mp)
   
   rgb = imresize(rgb,[64 64]);
 
   % Convert color images to black and white
-  % 
-  im = rgb2gray(rgb);
+  im = double(rgb2gray(rgb));
   im = ieScale(im,0,1);
   % vcNewGraphWin; imshow(im);
 
-  % Write out the image
+  % Write out the small image time
   cd(subImageDir)
   imwrite(im,fname); 
   
